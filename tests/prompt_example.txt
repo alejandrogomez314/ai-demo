@@ -1,0 +1,34 @@
+Your goal is to extract structured information from the user's input that matches the form described below. When extracting information please make sure it matches the type information exactly. Do not add any attributes that do not appear in the schema shown below.
+
+```TypeScript
+
+resume: { // Returns relevant information from a resume in order to match to relevant job postings.
+ education: { // Educational degrees achieved
+  education: string // The educational degree
+ }
+ skills: { // Tools, application, or software that is listed in a job description. A skill is NEVER empty. Certifications don't count
+  skill: string // Tools, application, or software that is listed in a job description. A skill is NEVER empty. Certifications don't count
+ }
+}
+```
+
+
+Please output the extracted information in JSON format. Do not output anything except for the extracted information. Do not add any clarifying information. Do not add any fields that are not in the schema. If the text contains attributes that do not appear in the schema, please ignore them. All output must be in JSON format and follow the schema specified above. Wrap the JSON in <json> tags.
+
+
+
+Input: MS in Software Engineering from Villanova University
+Output: <json>{"resume": {"education": [{"education": "M.S. in Software Engineering"}]}}</json>
+Input: Bachelor of arts in English and Economics with a minor in Computer Science
+Output: <json>{"resume": {"education": [{"education": "B.A. in English"}, {"education": "B.A. in Economics"}]}}</json>
+Input: Experience in working with Netsuite, or Looker a plus.
+Output: <json>{"resume": {"skills": [{"skill": "Netsuite"}, {"skill": "Looker"}]}}</json>
+Input: Experience with Microsoft Azure
+Output: <json>{"resume": {"skills": [{"skill": "Microsoft Azure"}]}}</json>
+Input: Experience with cloud databases and technologies
+Output: <json>{"resume": {"skills": [{"skill": "cloud"}, {"skill": "cloud databases"}]}}</json>
+Input: You must know AWS to do well in the job
+Output: <json>{"resume": {"skills": [{"skill": "AWS"}]}}</json>
+Input: Troubleshooting customer issues and debugging from logs (Splunk, Syslogs, etc.) 
+Output: <json>{"resume": {"skills": [{"skill": "Splunk"}]}}</json>
+Input: Alejandro Gomez agomez.amdg@gmail.com | github.com/alejandrogomez314 Work Experience Associate Software Engineer, Software Engineering Institute December 2021 – Present ● Decreased secure coding testing cadence from 1/week to every commit by creating a reusable template with security tests that fulfilled DoD policy. Implemented in 70+ projects. ● Created tools, templates and scripts to automate regular dev tasks such as authenticating to on-prem registry, GPG commit signing, secrets detection in codebase and more. ● Built a multi-threaded networking application in Java to test Air Force Open Mission Systems’ security model and provided remediation recommendations. Unit tested and containerized. ● Maintained SEI’s internal infrastructure (100+ virtual machines, switches and storage banks) by updating software, upgrading hardware and performing regular security reviews. ● Applied novel research at Carnegie Mellon into workable prototypes, and published results in SEI blog and journals. Software Engineer, Industrial Resolution June 2021 – November 2021 ● Increased reliability and integrity of retail application by building up a large test suite for an existing ReactJS-based dashboard. Testing uncovered tightly coupled architecture which led to refractor. ● Reduced ElasticSearch query times 5x on ReactJS dashboard by parallelizing calls and lazy-loading components when data was requested, which led to increased user satisfaction. Software Engineer, Vanguard July 2018 – June 2021 ● Developed an Angular web application and NodeJS back-end for clients to open a new account with Vanguard, with increased satisfaction from users and reduced time to completion. ● Took client feedback from UX research, implemented in code and deployed within a few days, instead of months, using a new CI/CD pipeline. Wrote unit and integration tests. ● Lead the re-architecture and initial implementation of Portfolio Performance page from a monolith architecture to microservices in AWS Fargate. Education M.S. Software Engineering, Villanova University, Philadelphia PA 2018 – 2020 B.A. English, Economics, University of Miami, Miami FL 2014 – 2017 Publications ● Combining Security & Velocity in a Continuous-Integration Pipeline for Large Teams, SEI Blog 2022 ● Simulating Complex Networks with NS-3 and Docker, SEI Blog 2023 Projects ● Founder & Leader of the Pittsburgh Machine Learning Group, a community of ML enthusiasts and researchers that connect and share learnings. 150+ members so far. ● Created the “Chaos Monkeys” Community of Practice group at SEI, where devs get together every few weeks to show off cool ideas and code demos. ● Created the Lancaster group of “Papers We Love” during Pandemic, where we shared landmark papers in Computer Science and discussed their ideas.

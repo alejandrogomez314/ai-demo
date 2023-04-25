@@ -1,0 +1,34 @@
+{
+  "result": {
+    "resume": {
+      "education": [
+        {
+          "education": "M.S. Software Engineering"
+        },
+        {
+          "education": "B.A. English"
+        },
+        {
+          "education": "B.A. Economics"
+        }
+      ],
+      "skills": [
+        {
+          "skill": "ReactJS"
+        },
+        {
+          "skill": "ElasticSearch"
+        },
+        {
+          "skill": "Angular"
+        },
+        {
+          "skill": "NodeJS"
+        },
+        {
+          "skill": "AWS Fargate"
+        }
+      ]
+    }
+  }
+}

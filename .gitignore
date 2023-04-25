@@ -1,0 +1,4 @@
+.env
+resume.pdf
+.pytest_cache
+venv
