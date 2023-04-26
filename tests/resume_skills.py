@@ -1,0 +1,1 @@
+resume_skills = ['java', 'reactjs', 'angular', 'nodejs', 'ci/cd pipeline', 'aws fargate', 'elasticsearch', 'networking', 'security testing', 'automation', 'infrastructure maintenance', 'unit testing', 'integration testing', 'microservices', 'publication writing', 'machine learning', 'community building', 'project management' ] 

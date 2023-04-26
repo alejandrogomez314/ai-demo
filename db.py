@@ -1,31 +1,16 @@
-from langchain.vectorstores import Chroma
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.llms import OpenAI
-from langchain.chains import VectorDBQA
-from langchain.document_loaders import TextLoader
-
-from langchain.embeddings import SentenceTransformerEmbeddings 
+import uuid
 
 from bs4 import BeautifulSoup
+from langchain.embeddings import SentenceTransformerEmbeddings
 from markdownify import markdownify as md
 
 embeddings = SentenceTransformerEmbeddings(model="all-MiniLM-L6-v2")
 
-
-
-# LangChain Models
-from langchain.llms import OpenAI
+import json
 
 import predict_engine
-
-# Standard Helpers
-import pandas as pd
-import requests
-import time
-import json
-import os
-from datetime import datetime
+import config
+from config import db_global as db
 
 # get skills for each jobs
 # def populate_db_with_embeddings(jobs):
@@ -108,16 +93,24 @@ def create_embeddings_for_jobs(jobs):
 def select_job_ids(jobs):
     return [4992146, 4977225, 4961541, 4901909, 4977145, 4850151, 5004001, 4913783, 4954092, 4925230, 4997750, 4965052, 4961622, 4813901, 4899077]
 
-def insertEmbeddingsForAllJobs(jobs, db):
-    for job in jobs:
-        db.insert(job)
-
 def processJob(job_description):
     soup = BeautifulSoup(job_description, 'html.parser')
     text = soup.get_text()
     text = md(text)
     return text 
 
+def insertEmbeddingsForAllJobs(jobs):
+    try:
+        for job in jobs:
+            size = len(job['job_skills'])
+            db.collection.add(
+                documents=[skill for skill in job['job_skills']],
+                metadatas=[{'job_id': job['job_id'] } for _ in range(size)],
+                ids=[str(uuid.uuid4()) for _ in range(size)]
+            )
+    except Exception as err:
+        print("Exception inserting into db: ", err)
+    
 """
 Run batch script - this would be done on a regular basis to fill up the 
 database and keep jobs regularly updated.
@@ -128,11 +121,17 @@ database and keep jobs regularly updated.
 # my_jobs = get_jobs_by_ids(all_jobs, selected_job_ids)
 
 with open('tests/demo2_output.json', 'r') as file:
-    my_jobs = json.load(file)
+    jobs_with_skills = json.load(file)
 
 # jobs_with_skills = extract_relevant_info_from_jobs(my_jobs)
-jobs_with_skills_and_embeddings = create_embeddings_for_jobs(my_jobs)
-insertEmbeddingsForAllJobs(jobs_with_skills_and_embeddings, db)
+#jobs_with_skills_and_embeddings = create_embeddings_for_jobs(my_jobs)
+
+# insertEmbeddingsForAllJobs(jobs_with_skills)
+results = collection.query(
+    query_texts=["data engineering"],
+    n_results=5
+)
+printOutput(results)
 # try:
 #     insertEmbeddingsForAllJobs(jobs_with_skills_and_embeddings, db)
 # except:

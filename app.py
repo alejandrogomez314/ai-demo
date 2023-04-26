@@ -1,21 +1,16 @@
-from flask import Flask, request, jsonify
-from functools import reduce
-from pypdf import PdfReader
-import docx
 import io
+from functools import reduce
+
+import docx
+from flask import Flask, jsonify, request
+from pypdf import PdfReader
 
 import predict_engine as engine
+import config
 
 app = Flask(__name__)
-class TestConfig:
-    DEBUG = True
-    TESTING = True
-    # Add any other testing configurations here
-    # ...
-app.config.from_object('app.TestConfig')
-
-if __name__ == '__main__':
-    app.run(debug=True)  # Run the Flask app in debug mode
+app.config['DEBUG'] = config.DEBUG
+app.config['TESTING'] = config.TESTING
 
 def convert_to_text(file, file_ext):
     if file_ext == 'txt':
@@ -62,8 +57,15 @@ def predict_route():
 
     # Call the predict function with file_data
     try:
-        results = engine.predict(file_data)  # Call the predict function with file_data
-        matched_results = engine.match_skills(results)
+        if app.config['TESTING']:
+            import sys
+            sys.path.append('tests')
+            from resume_skills import resume_skills
+        else:
+            resume_skills = engine.predict(file_data)
+            
+
+        matched_results = engine.match_skills(resume_skills)
         return jsonify({'result': matched_results}), 200
     except Exception as e:
         return jsonify({'error': f'Failed to predict: {str(e)}'}), 500

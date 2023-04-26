@@ -8,7 +8,15 @@ from kor.nodes import Object, Text
 
 from dotenv import load_dotenv
 import os
+import json
 import time
+from langchain.embeddings import SentenceTransformerEmbeddings 
+embeddings = SentenceTransformerEmbeddings(model="all-MiniLM-L6-v2")
+
+from config import db_global as db
+
+with open('tests/demo2.json', 'r') as file:
+    jobs_data = json.load(file)
 
 # Load values from .env file
 load_dotenv()
@@ -56,25 +64,41 @@ def predict(text):
     elapsed_time = end_time - start_time
     print("Elapsed time: {:.6f} seconds".format(elapsed_time))
 
-    normalized_output = normalize(output)
-    
-    return normalized_output
+    normalized_skills = normalize(output)
+
+    return normalized_skills
 
 def normalize(data):
     if data and data['skills']:
         return [item['skill'].lower() if 'skill' in item else item for item in data['skills']]
     return data
 
-def match_skills(data):
-    resume_kills = data['resume_skills']
-    matched_jobs = []
-    for job in data['jobs']:
-        job_skills = job['job_skills']
-        relevance_score = len(set(resume_kills).intersection(job_skills))
-        job['job_relevance_score'] = relevance_score
-        matched_jobs.append(job)
-    matched_jobs.sort(key=lambda job: job['job_relevance_score'], reverse=True)
-    return matched_jobs
+def printOutput(output):
+    print(json.dumps(output,sort_keys=True, indent=3))
+
+def match_skills(resume_skills):
+    matched_jobs = {}
+    for skill in resume_skills:
+
+        results = db.query(query_texts=skill, n_results=3) 
+
+        for i,item in enumerate(results['metadatas'][0]):
+            if item['job_id'] in matched_jobs:
+                matched_jobs[item['job_id']] += results['distances'][0][i]
+            else:
+                matched_jobs[item['job_id']] = results['distances'][0][i]
+    
+    # sorted by total distance
+    sorted_result = dict(sorted(matched_jobs.items(), key=lambda x: x[1], reverse=True))
+
+    # return jobs for five highest-scoring job distances
+    final_result = []
+    for i,result in enumerate(sorted_result):
+        if i == 4:
+            break
+        final_result.append([job for job in jobs_data if job['job_id'] == result][0])
+
+    return final_result
 
 education_schema = Object(
     id="education",
